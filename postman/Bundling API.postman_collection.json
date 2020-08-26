@@ -1,0 +1,526 @@
+{
+	"info": {
+		"_postman_id": "f9e9d351-37ba-4e44-8713-d5c970ea776d",
+		"name": "Bundling API",
+		"description": "The Boku Bundling product provides a standardized platform for OTT Content Providers who wish to conduct\nbundling promotional programs with Mobile Network Operators and other 3rd-party carrier's. The product allows\nfor a level of flexibility in order to support multiple configurations when implementing with a carrier.\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Outbound (Merchant -> Boku)",
+			"item": [
+				{
+					"name": "Activate Entitlement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CWAProxy-HTTPS",
+								"value": "{{X-CWAProxy-HTTPS}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>activated</status>\n</update-entitlement-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bundling_url}}/bundling/1.0/update-entitlement",
+							"host": [
+								"{{bundling_url}}"
+							],
+							"path": [
+								"bundling",
+								"1.0",
+								"update-entitlement"
+							]
+						},
+						"description": "Called by the merchant to notify Boku that an entitlement shall be activated."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Entitlement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CWAProxy-HTTPS",
+								"value": "{{X-CWAProxy-HTTPS}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>cancelled</status>\n</update-entitlement-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bundling_url}}/bundling/1.0/update-entitlement",
+							"host": [
+								"{{bundling_url}}"
+							],
+							"path": [
+								"bundling",
+								"1.0",
+								"update-entitlement"
+							]
+						},
+						"description": "Called by the merchant to notify Boku that an entitlement shall be cancelled."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Inbound (Boku -> Merchant)",
+			"item": [
+				{
+					"name": "Send Entitlement Created Notification",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "97380ed1-90ca-434d-b23c-62b7993484c9",
+								"exec": [
+									"const uuid = require('uuid')",
+									"pm.globals.set(\"merchantProductId\", uuid.v4())"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CWAProxy-HTTPS",
+								"value": "{{X-CWAProxy-HTTPS}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-entitlement-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <request-id>{{$timestamp}}</request-id>\n    <network-id>{{networkId}}</network-id>\n    <campaign-id>{{campaignId}}</campaign-id>\n    <product-id>{{productId}}</product-id>\n    <merchant-product-id>{{merchantProductId}}</merchant-product-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <consumer>\n        <account-identifier>{{accountId}}</account-identifier>\n        <msisdn>{{msisdn}}</msisdn>\n    </consumer>\n    <subscription-start-date>{{timestamp}}</subscription-start-date>\n    <charge-owner>carrier</charge-owner>\n</create-entitlement-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{merchant_url}}/bundling/create-entitlement-notification",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"bundling",
+								"create-entitlement-notification"
+							]
+						},
+						"description": "Send entitlement created notification to merchant endpoint. Used by the merchant to test their handling of the notification."
+					},
+					"response": []
+				},
+				{
+					"name": "Send Entitlement Activated Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CWAProxy-HTTPS",
+								"value": "{{X-CWAProxy-HTTPS}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <request-id>{{$timestamp}}</request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>activated</status>\n</update-entitlement-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{merchant_url}}/bundling/update-entitlement-notification",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"bundling",
+								"update-entitlement-notification"
+							]
+						},
+						"description": "Send entitlement activated notification to merchant endpoint. Used by the merchant to test their handling of the notification."
+					},
+					"response": []
+				},
+				{
+					"name": "Send Entitlement Cancelled Notification Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CWAProxy-HTTPS",
+								"value": "{{X-CWAProxy-HTTPS}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <request-id>{{$timestamp}}</request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>cancelled</status>\n</update-entitlement-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{merchant_url}}/bundling/update-entitlement-notification",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"bundling",
+								"update-entitlement-notification"
+							]
+						},
+						"description": "Send entitlement cancelled notification to merchant endpoint. Used by the merchant to test their handling of the notification."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Carrier Simulator",
+			"item": [
+				{
+					"name": "Behaviors",
+					"item": [
+						{
+							"name": "Get Update Entitlement Behavior",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-CWAProxy-HTTPS",
+										"value": "{{X-CWAProxy-HTTPS}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement/entitlement/{{entitlementId}}",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"bundling",
+										"behavior",
+										"update-entitlement",
+										"entitlement",
+										"{{entitlementId}}"
+									]
+								},
+								"description": "Get the current update entitlement behavior for an entitlement id, if any exists."
+							},
+							"response": []
+						},
+						{
+							"name": "Set Update Entitlement Behavior",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "X-CWAProxy-HTTPS",
+										"value": "{{X-CWAProxy-HTTPS}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-behavior status=\"ERROR\" error-code=\"9\" error-code-namespace=\"test\" retriable=\"false\"/>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement/entitlement/{{entitlementId}}",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"bundling",
+										"behavior",
+										"update-entitlement",
+										"entitlement",
+										"{{entitlementId}}"
+									]
+								},
+								"description": "Set the update entitlement behavior for an entitlement id."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Update Entitlement Behavior",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-CWAProxy-HTTPS",
+										"value": "{{X-CWAProxy-HTTPS}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement/entitlement/{{entitlementId}}",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"bundling",
+										"behavior",
+										"update-entitlement",
+										"entitlement",
+										"{{entitlementId}}"
+									]
+								},
+								"description": "Delete the current update entitlement behavior for an entitlement id, if any exists."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete All Update Entitlement Behaviors",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-CWAProxy-HTTPS",
+										"type": "text",
+										"value": "{{X-CWAProxy-HTTPS}}"
+									}
+								],
+								"url": {
+									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"bundling",
+										"behavior",
+										"update-entitlement"
+									]
+								},
+								"description": "Delete all update entitlement behaviors for all entitlement id's."
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Create Entitlement",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "02d3898a-93ac-4ab2-9b46-2b723a22ed87",
+								"exec": [
+									"String.prototype.replaceAt = function(index, replacement) {",
+									"    return this.substr(0, index) + replacement + this.substr(index + replacement.length);",
+									"}",
+									"",
+									"var msisdnFormat = pm.variables.get(\"msisdnFormat\")",
+									"var msisdn = msisdnFormat",
+									"while(msisdn.indexOf(\"x\") > -1) {",
+									"  msisdn = msisdn.replaceAt(msisdn.indexOf(\"x\"), Math.floor(Math.random() * 10).toString())",
+									"}",
+									"pm.globals.set(\"msisdn\", msisdn)",
+									"pm.globals.set(\"accountId\", btoa(msisdn))",
+									"",
+									"pm.variables.set(\"country\", pm.variables.get(\"country\").toUpperCase())"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "c8ac4441-25bc-496d-8cf2-740012f26102",
+								"exec": [
+									"pm.globals.set(\"entitlementId\", xml2Json(responseBody)[\"create-entitlement-response\"][\"entitlement-id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CWAProxy-HTTPS",
+								"value": "{{X-CWAProxy-HTTPS}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-entitlement-request>\n    <partner-request-id>{{$timestamp}}</partner-request-id>\n    <country>{{country}}</country>\n    <partner-id>{{networkId}}</partner-id>\n    <partner-entitlement-id>{{$randomUUID}}</partner-entitlement-id>\n    <campaign-id>{{campaignId}}</campaign-id>\n    <consumer>\n        <account-identifier>{{accountId}}</account-identifier>\n        <msisdn>{{msisdn}}</msisdn>\n    </consumer>\n</create-entitlement-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{simulation_url}}/bundling/1.0/create-entitlement",
+							"host": [
+								"{{simulation_url}}"
+							],
+							"path": [
+								"bundling",
+								"1.0",
+								"create-entitlement"
+							]
+						},
+						"description": "Simulate a create entitlement call by the carrier to Boku. This is a prerequisite for activating and cancelling entitlements from the merchant."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Entitlement",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ad34f9c6-c96d-4dc8-a1cd-63ff97801a88",
+								"exec": [
+									"pm.variables.set(\"country\", pm.variables.get(\"country\").toUpperCase())"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "7976d62c-4638-46ad-8102-1d60ca101e76",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CWAProxy-HTTPS",
+								"type": "text",
+								"value": "{{X-CWAProxy-HTTPS}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <partner-request-id>{{$timestamp}}</partner-request-id>\n    <country>{{country}}</country>\n    <partner-id>{{networkId}}</partner-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>cancelled</status>\n</update-entitlement-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{simulation_url}}/bundling/1.0/update-entitlement",
+							"host": [
+								"{{simulation_url}}"
+							],
+							"path": [
+								"bundling",
+								"1.0",
+								"update-entitlement"
+							]
+						},
+						"description": "Simulate an update entitlement call by the carrier to Boku."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "aee23ba6-c2d1-469d-80eb-e1eee73e4827",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4fa89cef-4e98-4154-bb5f-93b4e89240f5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "2/HMAC_SHA256(H+SHA256(E)) partner-id={{merchantId}}, key-id={{keyId}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "298833bf-f5dd-4772-b876-3384caedd87b",
+				"type": "text/javascript",
+				"exec": [
+					"const moment = require('moment');",
+					"pm.variables.set(\"timestamp\", moment().format(\"YYYY-MM-DD HH:mm:ss\"));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e7a3b4ab-a0fe-463b-a9a2-74a8642c4d0b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
