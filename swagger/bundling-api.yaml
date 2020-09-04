@@ -599,6 +599,7 @@ components:
       type: string
       description: |
         The Boku-generated unique identifier for the customer and offer relationship
+      minLength: 19
       maxLength: 24
       xml:
         name: entitlement-id
