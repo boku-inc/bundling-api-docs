@@ -18,7 +18,10 @@
 								"exec": [
 									"const uuid = require('uuid')",
 									"pm.globals.set(\"consumerId\", new Date().getTime())",
-									"pm.globals.set(\"merchantSubscriptionId\", uuid.v4())"
+									"pm.globals.set(\"merchantSubscriptionId\", uuid.v4())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
 								],
 								"type": "text/javascript"
 							}
@@ -36,13 +39,7 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<hosted-subscription-optin-request>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <subscription-plan-id>{{subscriptionPlanId}}</subscription-plan-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <forward-url>http://www.google.com/</forward-url>\n    <!--network>{{networkId}}</network-->\n    <!--plan-start-date>{{timestamp}}</plan-start-date-->\n</hosted-subscription-optin-request>",
@@ -86,7 +83,10 @@
 								"exec": [
 									"const uuid = require('uuid')",
 									"pm.globals.set(\"consumerId\", new Date().getTime())",
-									"pm.globals.set(\"merchantSubscriptionId\", uuid.v4())"
+									"pm.globals.set(\"merchantSubscriptionId\", uuid.v4())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
 								],
 								"type": "text/javascript"
 							}
@@ -94,13 +94,7 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <subscription-plan-id>{{subscriptionPlanId}}</subscription-plan-id>\n    <subscription-status>paused</subscription-status>\n    <!--plan-start-date>{{timestamp}}</plan-start-date-->\n</create-subscription-request>",
@@ -136,17 +130,22 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "53eaa284-d60b-4b84-8d2f-b6e52f53cbfc",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<resume-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n</resume-subscription-request>",
@@ -182,17 +181,22 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c2446899-a564-4240-aa8c-c7ab7050eea8",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"type": "text",
-								"value": "{{X-CWAProxy-HTTPS}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<cancel-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <!--apply-after-date>{{timestamp}}</apply-after-date-->\n</cancel-subscription-request>",
@@ -228,17 +232,22 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e691c842-98c2-4faa-ae85-942a78d9836e",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"type": "text",
-								"value": "{{X-CWAProxy-HTTPS}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<query-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <!--merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id-->\n</query-subscription-request>",
@@ -270,18 +279,28 @@
 			"item": [
 				{
 					"name": "Send Subscription Optin Notification",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ad1abfeb-0523-4667-9ab5-ed630416a6dd",
+								"exec": [
+									"const uuid = require('uuid')",
+									"pm.variables.set('userToken', uuid.v4())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"type": "text",
-								"value": "{{X-CWAProxy-HTTPS}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<subscription-optin-notification>\n    <result status=\"OK\">\n        <reason-code>0</reason-code>\n        <message>Operation Successful</message>\n        <retriable>false</retriable>\n    </result>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <user-token>{{$randomUUID}}</user-token>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <network>{{networkId}}</network>\n    <notification-timestamp>{{timestamp}}</notification-timestamp>\n    <status>activated</status>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <timestamp>{{timestamp}}</timestamp>\n</subscription-optin-notification>",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<subscription-optin-notification>\n    <result status=\"OK\">\n        <reason-code>0</reason-code>\n        <message>Operation Successful</message>\n        <retriable>false</retriable>\n    </result>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <user-token>{{userToken}}</user-token>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <network>{{networkId}}</network>\n    <notification-timestamp>{{timestamp}}</notification-timestamp>\n    <status>activated</status>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <timestamp>{{timestamp}}</timestamp>\n</subscription-optin-notification>",
 							"options": {
 								"raw": {
 									"language": "xml"
@@ -302,15 +321,22 @@
 				},
 				{
 					"name": "Send Subscription Status Notification",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "50efe9e3-a401-47b7-80a7-cdc91addae7d",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"type": "text",
-								"value": "{{X-CWAProxy-HTTPS}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<subscription-status-notification>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <network>{{networkId}}</network>\n    <notification-timestamp>{{timestamp}}</notification-timestamp>\n    <status>activated</status>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <timestamp>{{timestamp}}</timestamp>\n</subscription-status-notification>",
@@ -341,7 +367,10 @@
 								"id": "6b41f283-a1da-4cd7-aced-8a6ae8f3d93d",
 								"exec": [
 									"const uuid = require('uuid')",
-									"pm.variables.set(\"chargeId\", uuid.v4().replace(/-/g, '').substring(0, 24))"
+									"pm.variables.set(\"chargeId\", uuid.v4().replace(/-/g, '').substring(0, 24))",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
 								],
 								"type": "text/javascript"
 							}
@@ -349,13 +378,7 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<charge-notification>\n    <result status=\"OK\">\n        <reason-code>0</reason-code>\n        <message>Operation Successful</message>\n        <retriable>false</retriable>\n    </result>\n    <charge-id>{{chargeId}}</charge-id>\n    <charge-status>success</charge-status>\n    <charge-type>renewal</charge-type>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <currency>{{currency}}</currency>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <network>{{networkId}}</network>\n    <notification-timestamp>{{timestamp}}</notification-timestamp>\n    <retry-count>1</retry-count>\n    <retry-duration>352</retry-duration>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <timestamp>{{timestamp}}</timestamp>\n    <total-amount>10.0000</total-amount>\n</charge-notification>",
@@ -388,15 +411,22 @@
 					"item": [
 						{
 							"name": "Set Charge Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "05ec9e0e-af87-4b9f-b6ce-425d9313950f",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<charge-behavior error-code=\"900\" delivery-status=\"REJECTD\"/>",
@@ -422,15 +452,22 @@
 						},
 						{
 							"name": "Get Charge Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "5d6d3d9f-3a8a-45f3-99ac-6f3a3c073939",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/msisdn/{{msisdn}}/charge-behavior",
 									"host": [
@@ -447,15 +484,22 @@
 						},
 						{
 							"name": "Delete Charge Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "13ff7868-6fbc-4783-9242-dd7d1d5d7324",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/msisdn/{{msisdn}}/charge-behavior",
 									"host": [
@@ -472,15 +516,22 @@
 						},
 						{
 							"name": "Delete All Charge Behaviors",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "d01d953e-08f0-4e16-b746-bca38c68af4b",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/msisdn",
 									"host": [
@@ -495,15 +546,22 @@
 						},
 						{
 							"name": "Set Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8f44a4c2-463e-455b-862d-8a13c85aa560",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<subscription-optin-behavior\n    subscription-optin-response-reason-code=\"96\"\n    notification-reason-code=\"96\"\n    notification-network=\"{{networkId}}\"\n    notification-latency=\"5000\"\n    msisdn=\"{{msisdn}}\"/>",
@@ -529,15 +587,22 @@
 						},
 						{
 							"name": "Get Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "bbd439ad-3422-4505-b4ad-6bfe4a37b4c6",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/subscription/{{consumerId}}/subscription-optin-behavior",
 									"host": [
@@ -554,15 +619,22 @@
 						},
 						{
 							"name": "Delete Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "e01fc0b7-b56c-4efc-88ad-3ca663ec3efe",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/subscription/{{consumerId}}/subscription-optin-behavior",
 									"host": [
@@ -579,15 +651,22 @@
 						},
 						{
 							"name": "Delete All Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "bd12363e-e76d-4bf2-a953-667d36d0cd98",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"type": "text",
-										"value": "{{X-CWAProxy-HTTPS}}"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/subscription",
 									"host": [
@@ -606,15 +685,22 @@
 				},
 				{
 					"name": "Charge Subscription",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "cde656bf-9f60-4558-bd92-a3273d31cc1a",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "{{simulation_url}}/subscription/{{subscriptionId}}/charge",
 							"host": [
@@ -633,21 +719,6 @@
 			"protocolProfileBehavior": {}
 		}
 	],
-	"auth": {
-		"type": "apikey",
-		"apikey": [
-			{
-				"key": "value",
-				"value": "2/HMAC_SHA256(H+SHA256(E)) partner-id={{merchantId}}, key-id={{keyId}}",
-				"type": "string"
-			},
-			{
-				"key": "key",
-				"value": "Authorization",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",

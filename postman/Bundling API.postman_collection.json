@@ -11,15 +11,22 @@
 			"item": [
 				{
 					"name": "Activate Entitlement",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9fb4dd6a-7813-4feb-aebd-3d3af62530fb",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>activated</status>\n</update-entitlement-request>",
@@ -46,15 +53,22 @@
 				},
 				{
 					"name": "Cancel Entitlement",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "70be0af3-07da-4f66-8c2b-712a28f2d01a",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>cancelled</status>\n</update-entitlement-request>",
@@ -94,7 +108,10 @@
 								"id": "97380ed1-90ca-434d-b23c-62b7993484c9",
 								"exec": [
 									"const uuid = require('uuid')",
-									"pm.globals.set(\"merchantProductId\", uuid.v4())"
+									"pm.globals.set('merchantProductId', uuid.v4())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
 								],
 								"type": "text/javascript"
 							}
@@ -102,13 +119,7 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-entitlement-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <request-id>{{$timestamp}}</request-id>\n    <network-id>{{networkId}}</network-id>\n    <campaign-id>{{campaignId}}</campaign-id>\n    <product-id>{{productId}}</product-id>\n    <merchant-product-id>{{merchantProductId}}</merchant-product-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <consumer>\n        <account-identifier>{{accountId}}</account-identifier>\n        <msisdn>{{msisdn}}</msisdn>\n    </consumer>\n    <subscription-start-date>{{timestamp}}</subscription-start-date>\n    <charge-owner>carrier</charge-owner>\n</create-entitlement-request>",
@@ -134,15 +145,22 @@
 				},
 				{
 					"name": "Send Entitlement Activated Notification",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "05c61f44-f170-4807-b498-074d5d190466",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <request-id>{{$timestamp}}</request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>activated</status>\n</update-entitlement-request>",
@@ -168,15 +186,22 @@
 				},
 				{
 					"name": "Send Entitlement Cancelled Notification Copy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c796c7c3-a698-47af-9288-dece245b1b76",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <request-id>{{$timestamp}}</request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>cancelled</status>\n</update-entitlement-request>",
@@ -210,44 +235,23 @@
 					"name": "Behaviors",
 					"item": [
 						{
-							"name": "Get Update Entitlement Behavior",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement/entitlement/{{entitlementId}}",
-									"host": [
-										"{{simulation_url}}"
-									],
-									"path": [
-										"bundling",
-										"behavior",
-										"update-entitlement",
-										"entitlement",
-										"{{entitlementId}}"
-									]
-								},
-								"description": "Get the current update entitlement behavior for an entitlement id, if any exists."
-							},
-							"response": []
-						},
-						{
 							"name": "Set Update Entitlement Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "c1400bd7-2722-4409-914b-3a6c601775b5",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-behavior status=\"ERROR\" error-code=\"9\" error-code-namespace=\"test\" retriable=\"false\"/>",
@@ -275,16 +279,58 @@
 							"response": []
 						},
 						{
+							"name": "Get Update Entitlement Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "925788ee-5215-4f10-96e0-a9efc92ac3f3",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement/entitlement/{{entitlementId}}",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"bundling",
+										"behavior",
+										"update-entitlement",
+										"entitlement",
+										"{{entitlementId}}"
+									]
+								},
+								"description": "Get the current update entitlement behavior for an entitlement id, if any exists."
+							},
+							"response": []
+						},
+						{
 							"name": "Delete Update Entitlement Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "89000de6-6cd8-4e00-a791-42c11f7ccad7",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"value": "{{X-CWAProxy-HTTPS}}",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement/entitlement/{{entitlementId}}",
 									"host": [
@@ -304,15 +350,22 @@
 						},
 						{
 							"name": "Delete All Update Entitlement Behaviors",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "95f7604a-ed8d-4a0d-905e-4b70a2ce29da",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-CWAProxy-HTTPS",
-										"type": "text",
-										"value": "{{X-CWAProxy-HTTPS}}"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{simulation_url}}/bundling/behavior/update-entitlement",
 									"host": [
@@ -340,19 +393,25 @@
 							"script": {
 								"id": "02d3898a-93ac-4ab2-9b46-2b723a22ed87",
 								"exec": [
+									"const uuid = require('uuid')",
+									"",
 									"String.prototype.replaceAt = function(index, replacement) {",
 									"    return this.substr(0, index) + replacement + this.substr(index + replacement.length);",
 									"}",
 									"",
-									"var msisdnFormat = pm.variables.get(\"msisdnFormat\")",
+									"var msisdnFormat = pm.variables.get('msisdnFormat')",
 									"var msisdn = msisdnFormat",
-									"while(msisdn.indexOf(\"x\") > -1) {",
-									"  msisdn = msisdn.replaceAt(msisdn.indexOf(\"x\"), Math.floor(Math.random() * 10).toString())",
+									"while(msisdn.indexOf('x') > -1) {",
+									"  msisdn = msisdn.replaceAt(msisdn.indexOf('x'), Math.floor(Math.random() * 10).toString())",
 									"}",
-									"pm.globals.set(\"msisdn\", msisdn)",
-									"pm.globals.set(\"accountId\", btoa(msisdn))",
+									"pm.globals.set('msisdn', msisdn)",
+									"pm.globals.set('accountId', btoa(msisdn))",
+									"pm.globals.set('partnerEntitlementId', uuid.v4())",
 									"",
-									"pm.variables.set(\"country\", pm.variables.get(\"country\").toUpperCase())"
+									"pm.variables.set('country', pm.variables.get('country').toUpperCase())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
 								],
 								"type": "text/javascript"
 							}
@@ -370,16 +429,10 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"value": "{{X-CWAProxy-HTTPS}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-entitlement-request>\n    <partner-request-id>{{$timestamp}}</partner-request-id>\n    <country>{{country}}</country>\n    <partner-id>{{networkId}}</partner-id>\n    <partner-entitlement-id>{{$randomUUID}}</partner-entitlement-id>\n    <campaign-id>{{campaignId}}</campaign-id>\n    <consumer>\n        <account-identifier>{{accountId}}</account-identifier>\n        <msisdn>{{msisdn}}</msisdn>\n    </consumer>\n</create-entitlement-request>",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-entitlement-request>\n    <partner-request-id>{{$timestamp}}</partner-request-id>\n    <country>{{country}}</country>\n    <partner-id>{{networkId}}</partner-id>\n    <partner-entitlement-id>{{partnerEntitlementId}}</partner-entitlement-id>\n    <campaign-id>{{campaignId}}</campaign-id>\n    <consumer>\n        <account-identifier>{{accountId}}</account-identifier>\n        <msisdn>{{msisdn}}</msisdn>\n    </consumer>\n</create-entitlement-request>",
 							"options": {
 								"raw": {
 									"language": "xml"
@@ -409,7 +462,10 @@
 							"script": {
 								"id": "ad34f9c6-c96d-4dc8-a1cd-63ff97801a88",
 								"exec": [
-									"pm.variables.set(\"country\", pm.variables.get(\"country\").toUpperCase())"
+									"pm.variables.set('country', pm.variables.get('country').toUpperCase())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
 								],
 								"type": "text/javascript"
 							}
@@ -427,13 +483,7 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-CWAProxy-HTTPS",
-								"type": "text",
-								"value": "{{X-CWAProxy-HTTPS}}"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<update-entitlement-request>\n    <partner-request-id>{{$timestamp}}</partner-request-id>\n    <country>{{country}}</country>\n    <partner-id>{{networkId}}</partner-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <update-type>status</update-type>\n    <status>cancelled</status>\n</update-entitlement-request>",
@@ -484,21 +534,6 @@
 			"protocolProfileBehavior": {}
 		}
 	],
-	"auth": {
-		"type": "apikey",
-		"apikey": [
-			{
-				"key": "key",
-				"value": "Authorization",
-				"type": "string"
-			},
-			{
-				"key": "value",
-				"value": "2/HMAC_SHA256(H+SHA256(E)) partner-id={{merchantId}}, key-id={{keyId}}",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -506,8 +541,8 @@
 				"id": "298833bf-f5dd-4772-b876-3384caedd87b",
 				"type": "text/javascript",
 				"exec": [
-					"const moment = require('moment');",
-					"pm.variables.set(\"timestamp\", moment().format(\"YYYY-MM-DD HH:mm:ss\"));"
+					"const moment = require('moment')",
+					"pm.variables.set(\"timestamp\", moment().format('YYYY-MM-DD HH:mm:ss'))"
 				]
 			}
 		},
