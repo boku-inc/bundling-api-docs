@@ -185,7 +185,7 @@
 					"response": []
 				},
 				{
-					"name": "Send Entitlement Cancelled Notification Copy",
+					"name": "Send Entitlement Cancelled Notification",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -222,6 +222,88 @@
 							]
 						},
 						"description": "Send entitlement cancelled notification to merchant endpoint. Used by the merchant to test their handling of the notification."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Behaviors",
+			"item": [
+				{
+					"name": "Set Entitlement Behavior",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "11390000-b6db-462a-af1c-1f7d7deef0a3",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<bundling-notification-behavior status=\"ERROR\" reason-code=\"96\" message=\"oh noes!\"/>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{merchant_url}}/bundling/behavior/{{merchantId}}/entitlement",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"bundling",
+								"behavior",
+								"{{merchantId}}",
+								"entitlement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Entitlement Behavior",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f3524641-8b1e-43fc-8494-a81fd17c39c8",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{merchant_url}}/bundling/behavior/{{merchantId}}/entitlement/clear",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"bundling",
+								"behavior",
+								"{{merchantId}}",
+								"entitlement",
+								"clear"
+							]
+						}
 					},
 					"response": []
 				}
@@ -455,7 +537,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Entitlement",
+					"name": "Cancel Entitlement",
 					"event": [
 						{
 							"listen": "prerequest",

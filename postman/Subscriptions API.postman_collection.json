@@ -97,7 +97,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <subscription-plan-id>{{subscriptionPlanId}}</subscription-plan-id>\n    <subscription-status>paused</subscription-status>\n    <!--plan-start-date>{{timestamp}}</plan-start-date-->\n</create-subscription-request>",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <subscription-plan-id>{{subscriptionPlanId}}</subscription-plan-id>\n    <!--subscription-status>paused</subscription-status-->\n    <!--plan-start-date>{{timestamp}}</plan-start-date-->\n</create-subscription-request>",
 							"options": {
 								"raw": {
 									"language": "xml"
