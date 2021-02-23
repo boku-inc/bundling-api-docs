@@ -1,0 +1,746 @@
+{
+	"info": {
+		"_postman_id": "6c98690b-17ea-4b68-af3a-51fcc9ae68f1",
+		"name": "Subscriptions API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Outbound (Merchant -> Boku)",
+			"item": [
+				{
+					"name": "Hosted Optin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4ba709cf-3371-4757-8504-34e7dfd8d7fe",
+								"exec": [
+									"const uuid = require('uuid')",
+									"pm.globals.set(\"consumerId\", new Date().getTime())",
+									"pm.globals.set(\"merchantSubscriptionId\", uuid.v4())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e37d7dc9-dec6-4f05-940a-1ddf59876869",
+								"exec": [
+									"pm.globals.set(\"subscriptionId\", xml2Json(responseBody)[\"hosted-subscription-optin-response\"][\"subscription-id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<hosted-subscription-optin-request>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <subscription-plan-id>{{subscriptionPlanId}}</subscription-plan-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <forward-url>http://www.google.com/</forward-url>\n    <!--network>{{networkId}}</network-->\n    <!--plan-start-date>{{timestamp}}</plan-start-date-->\n</hosted-subscription-optin-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{subscription_url}}/subscription/1.0/hosted-subscription-optin",
+							"host": [
+								"{{subscription_url}}"
+							],
+							"path": [
+								"subscription",
+								"1.0",
+								"hosted-subscription-optin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e1932f6a-099c-4b8c-8f17-4891d611584c",
+								"exec": [
+									"pm.globals.set(\"subscriptionId\", xml2Json(responseBody)[\"create-subscription-response\"][\"subscription-id\"])"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "89aefe93-3d83-470e-9ddb-f4b77b91c639",
+								"exec": [
+									"const uuid = require('uuid')",
+									"pm.globals.set(\"consumerId\", new Date().getTime())",
+									"pm.globals.set(\"merchantSubscriptionId\", uuid.v4())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<create-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-request-id>{{$timestamp}}</merchant-request-id>\n    <entitlement-id>{{entitlementId}}</entitlement-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <subscription-plan-id>{{subscriptionPlanId}}</subscription-plan-id>\n    <!--subscription-status>paused</subscription-status-->\n    <!--plan-start-date>{{timestamp}}</plan-start-date-->\n</create-subscription-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{subscription_url}}/subscription/1.0/create-subscription",
+							"host": [
+								"{{subscription_url}}"
+							],
+							"path": [
+								"subscription",
+								"1.0",
+								"create-subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resume Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "00edb336-1b41-4ab2-a1d8-7ff667417247",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "53eaa284-d60b-4b84-8d2f-b6e52f53cbfc",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<resume-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n</resume-subscription-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{subscription_url}}/subscription/1.0/resume-subscription",
+							"host": [
+								"{{subscription_url}}"
+							],
+							"path": [
+								"subscription",
+								"1.0",
+								"resume-subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "110daaab-952b-442d-bb64-14f1d2b455f6",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c2446899-a564-4240-aa8c-c7ab7050eea8",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<cancel-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <!--apply-after-date>{{timestamp}}</apply-after-date-->\n</cancel-subscription-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{subscription_url}}/subscription/1.0/cancel-subscription",
+							"host": [
+								"{{subscription_url}}"
+							],
+							"path": [
+								"subscription",
+								"1.0",
+								"cancel-subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Query Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c340b9a1-dc91-4a05-8338-b213a492152c",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e691c842-98c2-4faa-ae85-942a78d9836e",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<query-subscription-request>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <!--merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id-->\n</query-subscription-request>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{subscription_url}}/subscription/1.0/query-subscription",
+							"host": [
+								"{{subscription_url}}"
+							],
+							"path": [
+								"subscription",
+								"1.0",
+								"query-subscription"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Inbound (Boku -> Merchant)",
+			"item": [
+				{
+					"name": "Send Subscription Optin Notification",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ad1abfeb-0523-4667-9ab5-ed630416a6dd",
+								"exec": [
+									"const uuid = require('uuid')",
+									"pm.variables.set('userToken', uuid.v4())",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<subscription-optin-notification>\n    <result status=\"OK\">\n        <reason-code>0</reason-code>\n        <message>Operation Successful</message>\n        <retriable>false</retriable>\n    </result>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <user-token>{{userToken}}</user-token>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <network>{{networkId}}</network>\n    <notification-timestamp>{{timestamp}}</notification-timestamp>\n    <status>activated</status>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <timestamp>{{timestamp}}</timestamp>\n</subscription-optin-notification>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{merchant_url}}/subscription-optin-notification",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"subscription-optin-notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Subscription Status Notification",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "50efe9e3-a401-47b7-80a7-cdc91addae7d",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<subscription-status-notification>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <network>{{networkId}}</network>\n    <notification-timestamp>{{timestamp}}</notification-timestamp>\n    <status>activated</status>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <timestamp>{{timestamp}}</timestamp>\n</subscription-status-notification>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{merchant_url}}/subscription-status-notification",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"subscription-status-notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Charge Notification",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6b41f283-a1da-4cd7-aced-8a6ae8f3d93d",
+								"exec": [
+									"const uuid = require('uuid')",
+									"pm.variables.set(\"chargeId\", uuid.v4().replace(/-/g, '').substring(0, 24))",
+									"",
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<charge-notification>\n    <result status=\"OK\">\n        <reason-code>0</reason-code>\n        <message>Operation Successful</message>\n        <retriable>false</retriable>\n    </result>\n    <charge-id>{{chargeId}}</charge-id>\n    <charge-status>success</charge-status>\n    <charge-type>renewal</charge-type>\n    <consumer-id>{{consumerId}}</consumer-id>\n    <country>{{country}}</country>\n    <currency>{{currency}}</currency>\n    <merchant-id>{{merchantId}}</merchant-id>\n    <merchant-subscription-id>{{merchantSubscriptionId}}</merchant-subscription-id>\n    <network>{{networkId}}</network>\n    <notification-timestamp>{{timestamp}}</notification-timestamp>\n    <retry-count>1</retry-count>\n    <retry-duration>352</retry-duration>\n    <subscription-id>{{subscriptionId}}</subscription-id>\n    <timestamp>{{timestamp}}</timestamp>\n    <total-amount>10.0000</total-amount>\n</charge-notification>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{merchant_url}}/charge-notification",
+							"host": [
+								"{{merchant_url}}"
+							],
+							"path": [
+								"charge-notification"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Carrier Simulator",
+			"item": [
+				{
+					"name": "Behaviors",
+					"item": [
+						{
+							"name": "Set Charge Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "05ec9e0e-af87-4b9f-b6ce-425d9313950f",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<charge-behavior error-code=\"900\" delivery-status=\"REJECTD\"/>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{simulation_url}}/msisdn/{{msisdn}}/charge-behavior",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"msisdn",
+										"{{msisdn}}",
+										"charge-behavior"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Charge Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "5d6d3d9f-3a8a-45f3-99ac-6f3a3c073939",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{simulation_url}}/msisdn/{{msisdn}}/charge-behavior",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"msisdn",
+										"{{msisdn}}",
+										"charge-behavior"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Charge Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "13ff7868-6fbc-4783-9242-dd7d1d5d7324",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{simulation_url}}/msisdn/{{msisdn}}/charge-behavior",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"msisdn",
+										"{{msisdn}}",
+										"charge-behavior"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete All Charge Behaviors",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "d01d953e-08f0-4e16-b746-bca38c68af4b",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{simulation_url}}/msisdn",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"msisdn"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8f44a4c2-463e-455b-862d-8a13c85aa560",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<subscription-optin-behavior\n    subscription-optin-response-reason-code=\"96\"\n    notification-reason-code=\"96\"\n    notification-network=\"{{networkId}}\"\n    notification-latency=\"5000\"\n    msisdn=\"{{msisdn}}\"/>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{simulation_url}}/subscription/{{consumerId}}/subscription-optin-behavior",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"subscription",
+										"{{consumerId}}",
+										"subscription-optin-behavior"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "bbd439ad-3422-4505-b4ad-6bfe4a37b4c6",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{simulation_url}}/subscription/{{consumerId}}/subscription-optin-behavior",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"subscription",
+										"{{consumerId}}",
+										"subscription-optin-behavior"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "e01fc0b7-b56c-4efc-88ad-3ca663ec3efe",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{simulation_url}}/subscription/{{consumerId}}/subscription-optin-behavior",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"subscription",
+										"{{consumerId}}",
+										"subscription-optin-behavior"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete All Optin Behavior",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "bd12363e-e76d-4bf2-a953-667d36d0cd98",
+										"exec": [
+											"// Sign the request",
+											"eval(pm.variables.get('requestSigner')).sign()"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{simulation_url}}/subscription",
+									"host": [
+										"{{simulation_url}}"
+									],
+									"path": [
+										"subscription"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Charge Subscription",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "cde656bf-9f60-4558-bd92-a3273d31cc1a",
+								"exec": [
+									"// Sign the request",
+									"eval(pm.variables.get('requestSigner')).sign()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{simulation_url}}/subscription/{{subscriptionId}}/charge",
+							"host": [
+								"{{simulation_url}}"
+							],
+							"path": [
+								"subscription",
+								"{{subscriptionId}}",
+								"charge"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5c1beb17-c8a2-44f0-8b0e-961a760c6904",
+				"type": "text/javascript",
+				"exec": [
+					"const moment = require('moment');",
+					"pm.variables.set(\"timestamp\", moment().format(\"YYYY-MM-DD HH:mm:ss\"));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "15d636c6-9390-4275-b7b7-b1c5b24a38c7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

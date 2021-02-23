@@ -1,0 +1,727 @@
+openapi: 3.0.1
+
+info:
+  title: Boku Bundling
+  version: 1.0.0
+  description: |
+    The Boku Bundling product provides a standardized platform for OTT Content Providers who wish to conduct
+    bundling promotional programs with Mobile Network Operators and other 3rd-party carrier's. The product allows
+    for a level of flexibility in order to support multiple configurations when implementing with a carrier.
+  license:
+    name: Boku Confidential and Proprietary
+
+servers:
+  - url: https://{country}-bundling-api-stage.boku.com/
+    description: Merchant Test Environment
+    variables:
+        country:
+          enum:
+            - "us"
+            - "de"
+            - "jp"
+          default: "us"
+  - url: http://bundlingfacade.local-paymo.net/
+    description: Development environment
+
+tags:
+  - name: inbound
+    description: Calls from Boku to the merchant
+  - name: outbound
+    description: Calls from the merchant to Boku
+
+paths:
+  /bundling/1.0/update-entitlement:
+    post:
+#      summary: Update an entitlement
+      description: |
+        Called by the merchant to notify Boku that information about the entitlement has changed.
+      tags:
+        - outbound
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UpdateEntitlementRequest'
+      responses:
+        "200":
+          description: Operation Successful
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UpdateEntitlementResponse'
+              examples:
+                "0 - Operation Successful":
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <update-entitlement-response>
+                        <result status="OK">
+                            <reason-code>0</reason-code>
+                            <message>Success</message>
+                            <retriable>false</retriable>
+                        </result>
+                        <country>US</country>
+                        <merchant-id>merchant1</merchant-id>
+                        <merchant-request-id>48d08321546f395138a5c23f</merchant-request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                        <timestamp>2020-02-02 15:45:09</timestamp>
+                    </update-entitlement-response>
+                "35 - Internal error":
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8?>
+                    <update-entitlement-response>
+                        <result status="ERROR">
+                            <reason-code>35</reason-code>
+                            <message>Internal Error</message>
+                            <retriable>true</retriable>
+                            <retry-delay>5000</retry-delay>
+                        </result>
+                        <country>US</country>
+                        <merchant-id>merchant1</merchant-id>
+                        <merchant-request-id>48d08321546f395138a5c23f</merchant-request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                    </update-entitlement-response>
+        "401":
+          description: |
+            Unauthorized: Returned when the Authentication header is missing, or when the 
+            signature verification fails.
+          content:
+            text/plain: {}
+      security:
+        - api_key: []
+      x-codegen-request-body-name: body
+
+  /bundling/1.0/create-entitlement-notification:
+    post:
+#      summary: Create an entitlement
+      description: |
+        Notification which is sent to the merchant when a carrier has created a new customer entitlement.
+      tags:
+        - inbound
+      servers:
+        - url: "{scheme}://{host}:{port}/{path}"
+          description: Merchant server to the send create entitlement notification to
+          variables:
+            scheme:
+              enum:
+                - "http"
+                - "https"
+              default: "https"
+            host:
+              default: "merchant.com"
+            port:
+              default: "443"
+            path:
+              default: ""
+#      parameters:
+#        - in: header
+#          name: Authorization
+#          default: 2/HMAC_SHA256(H+SHA256(E)) partner-id={partner-id}, key-id={key-id}
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CreateEntitlementNotificationRequest'
+      responses:
+        "200":
+          description: Operation Successful
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CreateEntitlementNotificationResponse'
+              examples:
+                "0 - Operation Successful":
+                  description: |
+                    Return a status of `OK` and a reason code of `0` when the notification was processed
+                    successfully. Optionally provide merchant entitlement ID and/or merchant entitlement URL. If
+                    no URL is received the default URL will be used.
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <create-entitlement-response>
+                        <result status="OK">
+                            <reason-code>0</reason-code>
+                            <message>Success</message>
+                            <retriable>false</retriable>
+                        </result>
+                        <request-id>1026791135600705540</request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                        <merchant-entitlement-id>c592d262-6a6f-45c7-8a3a-8a8d0472bcb1</merchant-entitlement-id>
+                        <merchant-entitlement-url>https://merchant.com/bundling/activate/1026791135600705536</merchant-entitlement-url>
+                    </create-entitlement-response>
+                "35 - Internal error":
+                  description: |
+                    Return a status of `ERROR` and a reason code of `35` when an unrecoverable internal error has
+                    occurred. If the operation is retriable, you may include a minimum duration in milliseconds to
+                    wait before resending the request.
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <create-entitlement-response>
+                        <result status="ERROR">
+                            <reason-code>35</reason-code>
+                            <message>Internal Error</message>
+                            <retriable>true</retriable>
+                            <retry-delay>5000</retry-delay>
+                        </result>
+                        <request-id>1026791135600705540</request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                    </create-entitlement-response>
+                "124 - Invalid Request - Idempotent Request ID conflict":
+                  description: |
+                    Return a status of `ERROR` and a reason code of `124` when a request id is reused with a
+                    different entitlement id.
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <create-entitlement-response>
+                        <result status="ERROR">
+                            <reason-code>124</reason-code>
+                            <message>Invalid Request - Idempotent Request ID conflict</message>
+                            <retriable>false</retriable>
+                        </result>
+                        <request-id>1026791135600705540</request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                    </create-entitlement-response>
+                "600 - Entitlement State Conflict":
+                  description: |
+                    Return a status of `ERROR` and a reason code of `600` if an entitlement with the same
+                    entitlement id already exists and is not in a state that can be activated.
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <create-entitlement-response>
+                        <result status="ERROR">
+                            <reason-code>600</reason-code>
+                            <message>Entitlement State Conflict</message>
+                            <retriable>false</retriable>
+                        </result>
+                        <request-id>1026791135600705540</request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                    </create-entitlement-response>
+                "603 - Product Not Found":
+                  description: |
+                    Return a status of `ERROR` and a reason code of `603` if the product id referenced in
+                    `merchant-product-id` does not refer to an available product in the merchant system.
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <create-entitlement-response>
+                        <result status="ERROR">
+                            <reason-code>604</reason-code>
+                            <message>Product Not Found</message>
+                            <retriable>false</retriable>
+                        </result>
+                        <request-id>1026791135600705540</request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                    </create-entitlement-response>
+        "401":
+          description: |
+            Unauthorized: Returned when the Authentication header is missing, or when the
+            signature verification fails.
+          content:
+            text/plain: {}
+      security:
+        - api_key: []
+      x-codegen-request-body-name: body
+
+  /bundling/1.0/update-entitlement-notification:
+    post:
+#      summary: Update an entitlement
+      description: |
+        Called by Boku to notify the merchant that information about the entitlement has changed.
+      tags:
+        - inbound
+      servers:
+        - url: "{scheme}://{host}:{port}/{path}"
+          description: Merchant server to the send update entitlement notification to
+          variables:
+            scheme:
+              enum:
+                - "http"
+                - "https"
+              default: "https"
+            host:
+              default: "merchant.com"
+            port:
+              default: "443"
+            path:
+              default: ""
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UpdateEntitlementNotificationRequest'
+      responses:
+        "200":
+          description: Operation Successful
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UpdateEntitlementNotificationResponse'
+              examples:
+                "0 - Operation Successful":
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <update-entitlement-response>
+                        <result status="OK">
+                            <reason-code>0</reason-code>
+                            <message>Success</message>
+                            <retriable>false</retriable>
+                        </result>
+                        <request-id>7hvr3y839dgwdius983g37t</request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                    </update-entitlement-response>
+                "35 - Internal Error":
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <update-entitlement-response>
+                        <result status="ERROR">
+                            <reason-code>35</reason-code>
+                            <message>Internal Error</message>
+                            <retriable>true</retriable>
+                            <retry-delay>5000</retry-delay>
+                        </result>
+                        <request-id>7hvr3y839dgwdius983g37t</request-id>
+                        <entitlement-id>1026791135600705536</entitlement-id>
+                    </update-entitlement-response>
+        "401":
+          description: |
+            Unauthorized: Returned when the Authentication header is missing, or when the 
+            signature verification fails.
+          content:
+            text/plain: {}
+      security:
+        - api_key: []
+      x-codegen-request-body-name: body
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header
+
+  schemas:
+    Result:
+      description: The result of the operation
+      type: object
+      required:
+        - status
+        - reasonCode
+        - message
+        - retriable
+      properties:
+        status:
+          type: string
+          description: |
+            - `OK`: If the request was processed successfully
+            - `ERROR`: If a problem occurred while processing the request
+          enum:
+            - OK
+            - ERROR
+          xml:
+            name: status
+            attribute: true
+        reasonCode:
+          type: integer
+          format: int32
+          description: |
+            Provides additional information for the status
+          xml:
+            name: reason-code
+        message:
+          type: string
+          description: |
+            Description of the reason code
+          xml:
+            name: message
+        retriable:
+          type: boolean
+          description: |
+            - `true`: If the request can be retried
+            - `false`: Otherwise
+          xml:
+            name: retriable
+        retryDelay:
+          type: integer
+          format: int32
+          description: |
+            Minimum milliseconds to delay before retrying request, only if retriable=true
+          nullable: true
+          default: 5000
+          xml:
+            name: retry-delay
+        invalidRequestFields:
+          type: array
+          description: |
+            Provides per-field error information in the case where the submitted request did not 
+            satisfy validation constraints
+          nullable: true
+          items:
+            $ref: '#/components/schemas/InvalidRequestField'
+          xml:
+            name: invalid-request-fields
+            wrapped: true
+      xml:
+        name: result
+      example:
+        status: "OK"
+        reasonCode: 0
+        message: "Operation Successful"
+        retriable: false
+        retryDelay: 0
+        invalidRequestFields: []
+    InvalidRequestField:
+      type: object
+      required:
+        - path
+        - reason
+      properties:
+        path:
+          type: string
+          description: |
+            Property path of the field that was in error. The element or attribute name is given
+            in camel-case, with nested objects delimited by '.' (period). If there are multiple 
+            distinct errors regarding a particular field, it may appear more than once. I.e.
+            'field[path]' is not necessarily unique
+          xml:
+            name: path
+            attribute: true
+        reason:
+          type: string
+          description: |
+            A descriptive reason why the field was invalid. This message is not localized and so
+            is not appropriate for customer messaging
+          xml:
+            name: reason
+            attribute: true
+      xml:
+        name: field
+    UpdateEntitlementRequest:
+      type: object
+      required:
+        - country
+        - merchantId
+        - merchantRequestId
+        - entitlementId
+        - updateType
+      properties:
+        country:
+          $ref: '#/components/parameters/Country'
+        merchantId:
+          $ref: '#/components/parameters/MerchantId'
+        merchantRequestId:
+          $ref: '#/components/parameters/MerchantRequestId'
+        entitlementId:
+          $ref: '#/components/parameters/EntitlementId'
+        updateType:
+          $ref: '#/components/parameters/UpdateType'
+        status:
+          $ref: '#/components/parameters/EntitlementStatus'
+      xml:
+        name: update-entitlement-request
+    UpdateEntitlementResponse:
+      type: object
+      required:
+        - result
+        - country
+        - merchantId
+        - merchantRequestId
+        - entitlementId
+      properties:
+        result:
+          $ref: '#/components/parameters/Result'
+        country:
+          $ref: '#/components/parameters/Country'
+        merchantId:
+          $ref: '#/components/parameters/MerchantId'
+        merchantRequestId:
+          $ref: '#/components/parameters/MerchantRequestId'
+        entitlementId:
+          $ref: '#/components/parameters/EntitlementId'
+        timestamp:
+          $ref: '#/components/parameters/Timestamp'
+      xml:
+        name: update-entitlement-response
+    CreateEntitlementNotificationRequest:
+      type: object
+      required: 
+        - country
+        - merchantId
+        - requestId
+        - networkId
+        - campaignId
+        - productId
+        - merchantProductId
+        - entitlementId
+        - consumer
+        - chargeOwner
+      properties:
+        country:
+          $ref: '#/components/parameters/Country'
+        merchantId:
+          $ref: '#/components/parameters/MerchantId'
+        requestId:
+          $ref: '#/components/parameters/RequestId'
+        networkId:
+          $ref: '#/components/parameters/NetworkId'
+        campaignId:
+          $ref: '#/components/parameters/CampaignId'
+        productId:
+          $ref: '#/components/parameters/ProductId'
+        merchantProductId:
+          $ref: '#/components/parameters/MerchantProductId'
+        entitlementId:
+          $ref: '#/components/parameters/EntitlementId'
+        consumer:
+          $ref: '#/components/schemas/Consumer'
+        subscriptionStartDate:
+          $ref: '#/components/parameters/SubscriptionStartDate'
+        chargeOwner:
+          $ref: '#/components/parameters/ChargeOwner'
+      xml:
+        name: create-entitlement-request
+    CreateEntitlementNotificationResponse:
+      type: object
+      required:
+        - result
+        - requestId
+        - entitlementId
+      properties:
+        result:
+          $ref: '#/components/parameters/Result'
+        requestId:
+          $ref: '#/components/parameters/RequestId'
+        entitlementId:
+          $ref: '#/components/parameters/EntitlementId'
+        merchantEntitlementId:
+          $ref: '#/components/parameters/MerchantEntitlementId'
+        merchantEntitlementUrl:
+          $ref: '#/components/parameters/MerchantEntitlementUrl'
+      xml:
+        name: create-entitlement-response
+    Consumer:
+      type: object
+      required:
+        - accountIdentifier
+      properties:
+        accountIdentifier:
+          $ref: '#/components/parameters/AccountIdentifier'
+        msisdn:
+          $ref: '#/components/parameters/Msisdn'
+      xml:
+        name: consumer
+    UpdateEntitlementNotificationRequest:
+      type: object
+      required:
+        - country
+        - merchantId
+        - requestId
+        - entitlementId
+        - updateType
+      properties:
+        country:
+          $ref: '#/components/parameters/Country'
+        merchantId:
+          $ref: '#/components/parameters/MerchantId'
+        requestId:
+          $ref: '#/components/parameters/RequestId'
+        entitlementId:
+          $ref: '#/components/parameters/EntitlementId'
+        updateType:
+          $ref: '#/components/parameters/UpdateType'
+        status:
+          $ref: '#/components/parameters/EntitlementStatus'
+      xml:
+        name: update-entitlement-request
+    UpdateEntitlementNotificationResponse:
+      type: object
+      required:
+        - result
+        - requestId
+        - entitlementId
+      properties:
+        result:
+          $ref: '#/components/parameters/Result'
+        requestId:
+          $ref: '#/components/parameters/RequestId'
+        entitlementId:
+          $ref: '#/components/parameters/EntitlementId'
+      xml:
+        name: update-entitlement-response
+
+  parameters:
+    Result:
+      $ref: '#/components/schemas/Result'
+    Country:
+      type: string
+      description: |
+        Country code in ISO 3166-1-alpha-2 standard
+      minLength: 2
+      maxLength: 2
+      externalDocs:
+        url: http://www.iso.org/iso/english_country_names_and_code_elements
+      xml:
+        name: country
+      example: "US"
+    NetworkId:
+      type: string
+      description: |
+        The Boku-assigned network identifier value
+      minLength: 6
+      maxLength: 10
+      xml:
+        name: network-id
+      example: "12f345"
+    MerchantId:
+      type: string
+      description: |
+        The Boku-assigned merchant identifier value
+      maxLength: 50
+      xml:
+        name: merchant-id
+      example: "merchant1"
+    RequestId:
+      type: string
+      description: |
+        A Boku-generated identifier that uniquely identifies the request
+      maxLength: 50
+      xml:
+        name: request-id
+      example: "7hvr3y839dgwdius983g37t"
+    MerchantRequestId:
+      type: string
+      description: |
+        A merchant-generated identifier that uniquely identifies the request
+      maxLength: 50
+      xml:
+        name: merchant-request-id
+      example: "48d08321546f395138a5c23f"
+    EntitlementId:
+      type: string
+      description: |
+        The Boku-generated unique identifier for the customer and offer relationship
+      minLength: 19
+      maxLength: 24
+      xml:
+        name: entitlement-id
+      example: "1026791135600705536"
+    MerchantEntitlementId:
+      type: string
+      description: |
+        The merchant-generated unique identifier for the customer and offer relationship
+      maxLength: 50
+      xml:
+        name: merchant-entitlement-id
+      example: "c592d262-6a6f-45c7-8a3a-8a8d0472bcb1"
+    MerchantEntitlementUrl:
+      type: string
+      description: |
+        Custom entitlement URL to allow a customer to complete offer activation. If not provide
+        the static entitlement URL setup at onboarding time will be used
+      xml:
+        name: merchant-entitlement-url
+      example: "https://merchant.com/bundling/activate/1026791135600705536"
+    ProductId:
+      type: string
+      description: |
+        The Boku-assigned product code associated with the provisioned product offer for the
+        merchant service
+      maxLength: 50
+      xml:
+        name: product-id
+      example: "87736973"
+    CampaignId:
+      type: string
+      description: |
+        The Boku-assigned campaign code associated with the pre-approved promotional package
+        created by the carrier through the catalog
+      maxLength: 50
+      xml:
+        name: campaign-id
+      example: "96771702"
+    MerchantProductId:
+      type: string
+      description: |
+        The merchant-assigned product code associated with the product
+      maxLength: 100
+      xml:
+        name: merchant-product-id
+      example: "abcPro123"
+    UpdateType:
+      type: string
+      description: |
+        The type of update being requested
+        - `status`: The status of the entitlement has been updated.
+      enum:
+        - status
+      xml:
+        name: update-type
+      example: "status"
+    EntitlementStatus:
+      type: string
+      description: |
+        The new status of the Entitlement
+        - `activated`: Notifies all parties to activate the entitlement
+        - `cancelled`: Notifies all parties to cancel the entitlement, subscription will end at
+        end of current cycle
+        - `terminated`: Notifies all parties to terminate the entitlement, subscription will end
+        immediately
+      enum:
+        - activated
+        - cancelled
+        - terminated
+      xml:
+        name: status
+      example: "activated"
+    Timestamp:
+      type: string
+      format: date-time
+      description: |
+        Timestamp in UTC at which the request was received (YYYY-MM-DD hh:mm:ss)
+      minLength: 19
+      maxLength: 19
+      externalDocs:
+        url: https://www.iso.org/iso-8601-date-and-time-format.html
+      xml:
+        name: timestamp
+      example: "2020-07-01 12:00:00"
+    SubscriptionStartDate:
+      type: string
+      format: date-time
+      description: |
+        Timestamp in UTC at which the subscription was started by the carrier
+        (YYYY-MM-DD hh:m:ss)
+      minLength: 19
+      maxLength: 19
+      externalDocs:
+        url: https://www.iso.org/iso-8601-date-and-time-format.html
+      xml:
+        name: subscription-start-date
+      example: "2020-07-01 12:00:00"
+    ChargeOwner:
+      type: string
+      enum:
+        - boku
+        - carrier
+        - merchant
+      description: |
+        Indicates the party that is responsible for charging the customer
+      xml:
+        name: charge-owner
+      example: "boku"
+    AccountIdentifier:
+      type: string
+      description: |
+        Carrier's unique, permanent identifier for the customer used to track offer acceptance
+        and activation
+      maxLength: 100
+      xml:
+        name: account-identifier
+      example: "68d08561546f399038a5c12f"
+    Msisdn:
+      type: string
+      description: |
+        The customer's mobile phone number, normalized into international format
+      maxLength: 20
+      xml:
+        name: msisdn
+      example: "14155551234"
